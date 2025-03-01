@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfect Match - Foundation Finder</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4e1d2; /* Light brown background */
+        color: #5a3e2b; /* Dark brown text */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+      }
+
+      .nav {
+        background-color: #8b5e3b; /* Medium brown */
+        padding: 20px;
+        width: 100%;
+        position: absolute;
+        top: 0;
+      }
+
+      .nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      .nav ul li {
+        margin: 0 20px;
+        font-size: 22px;
+      }
+
+      .nav ul li a {
+        text-decoration: none;
+        color: #fff;
+        font-weight: bold;
+      }
+
+      .active-link a {
+        border-bottom: 3px solid #fff;
+      }
+
+      .container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 600px;
+        width: 90%;
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 20px;
+      }
+
+      .button {
+        background-color: #8b5e3b; /* Brown button */
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        cursor: pointer;
+        font-size: 20px;
+        margin-top: 15px;
+        border-radius: 5px;
+      }
+
+      .button:hover {
+        background-color: #6d4c30; /* Darker brown */
+      }
+
+      .image-container {
+        margin-top: 20px;
+      }
+
+      #uploaded-image {
+        display: none;
+        width: 400px; /* Set a fixed width */
+        height: 300px; /* Set a fixed height */
+        object-fit: cover; /* Ensures the image fills the area without distortion */
+        border: 2px solid #5a3e2b;
+        border-radius: 5px;
+        margin-top: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Optional shadow for a polished look */
+      }
+
+      #color-boxes {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .color-box {
+        width: 60px;
+        height: 60px;
+        border-radius: 5px;
+        border: 3px solid #5a3e2b;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+      }
+
+      .color-box:hover {
+        transform: scale(1.1);
+      }
+
+      input[type="file"] {
+        font-size: 18px;
+        margin: 15px 0;
+      }
+
+      #selected-color {
+        width: 120px;
+        height: 120px;
+        margin: 20px auto;
+        border: 3px solid #000;
+        text-align: center;
+        line-height: 120px;
+        font-size: 18px;
+        font-weight: bold;
+        display: none;
+      }
+      #saveColorButton {
+        background-color: #6d4c30; /* Darker brown */
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+      }
+
+      #saveColorButton:hover {
+        background-color: #5a3e2b;
+      }
+      /* Guideline overlay */
+      #guideline-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 20px;
+      }
+
+      #guideline-overlay h2 {
+        margin-bottom: 20px;
+      }
+
+      #guideline-overlay p {
+        margin-bottom: 10px;
+      }
+
+      #guideline-overlay button {
+        background-color: #8b5e3b;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 18px;
+        border-radius: 5px;
+      }
+
+      #guideline-overlay button:hover {
+        background-color: #6d4c30;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <ul>
+        <li class="active-link">
+          <a href="home.html">Perfect Match</a>
+        </li>
+        <li>
+          <a href="loginlogic.php">Login</a>
+        </li>
+        <li>
+          <a href="#">About Us</a>
+        </li>
+      </ul>
+    </div>
+
+    <div id="guideline-overlay">
+      <h2>Image Upload Guidelines</h2>
+      <p>
+        Ensure even lighting, no makeup, and neutral background for the best
+        results.
+      </p>
+      <button onclick="closeGuidelineOverlay()">Got it!</button>
+    </div>
+    <div class="container">
+      <h1>Matching Tool</h1>
+
+      <!-- Image Upload -->
+      <input type="file" id="image-upload" accept="image/*" />
+      <button class="button" onclick="uploadAndProcess()">Process Image</button>
+
+      <div class="image-container">
+        <h2>Uploaded Image</h2>
+        <img id="uploaded-image" src="" alt="Uploaded Image" />
+
+        <!-- <h2>Extracted Dominant Colors</h2> -->
+        <div id="color-boxes"></div>
+
+        <!-- <h2>Selected Color</h2> -->
+        <div id="selected-color">None</div>
+      </div>
+
+      <button id="saveColorButton" onclick="sendColor()">Save Color</button>
+      <p id="saveColorMessage"></p>
+    </div>
+    <!-- <h2>Matched Foundation Shade</h2> -->
+    <div id="matched-foundation"></div>
+
+    <script>
+      let selectedHex = ""; // Define selectedHex globally
+
+      function closeGuidelineOverlay() {
+        document.getElementById("guideline-overlay").style.display = "none";
+      }
+      function uploadAndProcess() {
+        let input = document.getElementById("image-upload");
+        if (input.files.length === 0) {
+          alert("Please select an image first.");
+          return;
+        }
+
+        let formData = new FormData();
+        formData.append("image", input.files[0]);
+
+        fetch("/process-image", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              alert("Error: " + data.error);
+            } else {
+              alert(data.message);
+
+              // Display the uploaded image
+              let uploadedImg = document.getElementById("uploaded-image");
+              uploadedImg.src = data.uploaded_image;
+              uploadedImg.style.display = "block";
+
+              // Display dominant colors as boxes
+              const colorContainer = document.getElementById("color-boxes");
+              colorContainer.innerHTML = ""; // Clear old boxes
+
+              data.colors.forEach((color) => {
+                let colorBox = document.createElement("div");
+                colorBox.className = "color-box";
+                colorBox.style.backgroundColor = color;
+                colorBox.setAttribute("data-hex", color);
+                colorBox.onclick = () => selectColor(color);
+                colorContainer.appendChild(colorBox);
+              });
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function selectColor(hex) {
+        selectedHex = hex; // Set selectedHex when a color is chosen
+        let selectedBox = document.getElementById("selected-color");
+        selectedBox.style.backgroundColor = hex;
+        selectedBox.innerText = hex;
+        selectedBox.style.display = "block";
+      }
+
+      function sendColor() {
+        if (!selectedHex) {
+          alert("Please select a color first.");
+          return;
+        }
+
+        fetch("/save-color", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: 2, // Replace this with the actual logged-in user ID
+            shade_name: "Selected Shade",
+            hex_code: selectedHex,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(data.message);
+            document.getElementById("saveColorMessage").innerText =
+              data.message;
+            fetchMatchedFoundation();
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function fetchMatchedFoundation() {
+        fetch("/find-match", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            let matchContainer = document.getElementById("matched-foundation");
+
+            if (data.error) {
+              matchContainer.innerHTML = `<p style="color: red;">${data.error}</p>`;
+              return;
+            }
+
+            // Show matched foundation details to the user
+            matchContainer.innerHTML = `
+            <p><strong>Matched Shade:</strong> ${data.match} (${data.brand})</p>
+            <div style="width: 100px; height: 100px; background-color: ${data.hex}; border: 2px solid #000; margin: 10px auto;"></div>
+        `;
+
+            // Save the matched foundation shade in the database
+            saveMatchedShade(data.brand, data.match);
+          })
+          .catch((error) => console.error("Error fetching match:", error));
+      }
+
+      function saveMatchedShade(brand, shadeName) {
+        fetch("/save-shade", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: 2, // Replace with actual logged-in user ID
+            brand_name: brand,
+            shade_name: shadeName,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              alert("Error: " + data.error);
+            } else {
+              alert("Shade saved successfully!");
+            }
+          })
+          .catch((error) => console.error("Error saving shade:", error));
+      }
+    </script>
+  </body>
+</html>
